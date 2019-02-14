@@ -6,6 +6,10 @@ body {
     overflow-x: hidden;
 }
 
+.hide {
+    display: none;
+}
+
 header {
     display: grid;
     grid-template-columns: repeat(3,1fr);

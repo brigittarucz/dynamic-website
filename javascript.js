@@ -21,7 +21,9 @@ var database = [
 let productList = "http://kea-alt-del.dk/t5/api/productlist";
 let categoriesList = "http://kea-alt-del.dk/t5/api/categories"
 
-let promise = fetch(categoriesList).then(e=>e.json()).then(categ=>showCateg(categ));
+let promise = fetch(categoriesList)
+.then(e=>e.json())
+.then(categ=>showCateg(categ));
 
 let gridSys = document.getElementById("gridSystem");
 let ulNavig = document.querySelector("ul");
@@ -41,22 +43,54 @@ function showCateg(categ) {
         const a = document.createElement("a");
         a.textContent = category;
         a.href = "#";
-        a.addEventListener("click", ()=>filterCateg(category));
+        a.addEventListener("click", ()=>showCategory(category));
         a.style.textTransform = "capitalize";
+
 
         li.appendChild(a);
         ulNavig.appendChild(li);
-        gridSys.appendChild(h2);
+        divEl.appendChild(h2);
         gridSys.appendChild(divEl);
+
+function showCategory(category) {
+
+  let divsSelected = document.querySelectorAll("[id^='flexboxGrid']");
+                divsSelected.forEach(div => {
+                    if (div.id == "flexboxGrid" + category) {
+                        div.style.display = "flex";
+                        console.log("success");
+                    } else {
+                        div.style.display = "none";
+                        console.log(div.id);
+                    }
+                });
+            };
     }
-}
 
-/* function filterCateg(category) {
-    document.querySelectorAll("div #flexboxGrid"+category).forEach( div => {
+let allSelect = document.querySelector(".all");
+let divsSelected = document.querySelectorAll("[id^='flexboxGrid']");
+allSelect.addEventListener("click", showAll);
 
-    })
+function showAll() {
+    divsSelected.forEach(element=> {
+    element.style.display = "flex";
+    });
+};
+
+/* let allSelected = document.querySelector(".all");
+let divsSelected = document.querySelectorAll("[id^='flexboxGrid']");
+console.log(divsSelected);
+allSelected.addEventListener("click", showAll);
+
+function showAll() {
+
+     divsSelected.style.display = "flex";
 }
 */
+
+}
+
+
 
 function loadData(productList) {
 
