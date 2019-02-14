@@ -18,18 +18,55 @@ var database = [
     }
 ]
 
-let myLink = "http://kea-alt-del.dk/t5/api/productlist";
+let productList = "http://kea-alt-del.dk/t5/api/productlist";
+let categoriesList = "http://kea-alt-del.dk/t5/api/categories"
 
-function loadData(link){
+let promise = fetch(categoriesList).then(e=>e.json()).then(categ=>showCateg(categ));
 
-fetch(link).then(e=>e.json()).then(data=>show(data));
+let gridSys = document.getElementById("gridSystem");
+let ulNavig = document.querySelector("ul");
+
+function showCateg(categ) {
+    categ.forEach(createDivs);
+    function createDivs(category) {
+        const divEl = document.createElement("div");
+        const h2 = document.createElement("h2");
+        h2.style.textTransform = "capitalize";
+        divEl.id = "flexboxGrid" + category;
+        h2.textContent = category;
+
+        /* Creating the nav filter */
+
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.textContent = category;
+        a.href = "#";
+        a.addEventListener("click", ()=>filterCateg(category));
+        a.style.textTransform = "capitalize";
+
+        li.appendChild(a);
+        ulNavig.appendChild(li);
+        gridSys.appendChild(h2);
+        gridSys.appendChild(divEl);
+    }
+}
+
+/* function filterCateg(category) {
+    document.querySelectorAll("div #flexboxGrid"+category).forEach( div => {
+
+    })
+}
+*/
+
+function loadData(productList) {
+
+fetch(productList).then(e=>e.json()).then(data=>show(data));
 
 }
 
 function show(data) {
 
     const template = document.querySelector("#template1").content;
-    const templateModal = document.querySelector("#template2").content;
 
 data.forEach(functionName);
 
@@ -42,7 +79,6 @@ function functionName(elementTable) {
     clone.querySelector("#description").textContent = elementTable.shortdescription;
     clone.querySelector("img").setAttribute('src', ("imgs/large/" + elementTable.image + ".jpg"));
     clone.querySelector("#number").textContent = elementTable.stars;
-    console.log(elementTable.image);
     clone.querySelector("#region").textContent = elementTable.region;
     clone.querySelector(".price").textContent = elementTable.price + " dkk";
 
@@ -78,23 +114,13 @@ function functionName(elementTable) {
         clone.querySelector("#allergens").style.marginTop = "-10px";
     }
 
-    const cloneModal = templateModal.cloneNode(true);
-    cloneModal.querySelector("#longDescrip").textContent = elementTable.longDescription;
-
     parentElem.appendChild(clone);
 
-    parentElem.appendChild(cloneModal);
+}
 
 }
 
-    const genInfo = document.getElementById("generalInfo");
-    const cloneGenInfo = genInfo.cloneNode(true);
-    const modalCont = document.getElementById("modalContent");
-    modalCont.appendChild(cloneGenInfo);
-
-}
-
-loadData(myLink);
+loadData(productList);
 
 var numberStars = document.querySelectorAll("#number");
 var arrayLength = numberStars.length;
@@ -113,14 +139,3 @@ for (var i = 0; i < arrayLength; i++) {
 
 }
 
-var modalElem = document.getElementById("modalTemplate");
-var openButton = document.querySelector("button.openButton");
-var closeButton = document.querySelector("button.closeButton");
-
-openButton.onclick = function() {
-    modalElem.style.display = "block";
-}
-
-closeButton.onclick = function() {
-    modalElem.style.display = "none";
-}
