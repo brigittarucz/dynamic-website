@@ -1,23 +1,3 @@
-var database = [
-    {
-    name: "Russian Ringbread",
-    id: 10,
-    category: "starter",
-    related: 60,
-    price: 29,
-    soldOut: false,
-    discount: 10,
-    shortDescription: "Russisk ringbrød af Karapatisk mel",
-    longDescription: "Russisk ringbrød efter en klassisk opskrift fra Karapatien. Dejen blandes koldhæver 30 dage, inde brødet bages over bål. Meget sprødt, godt med Karapatisk bjerggedsmør.",
-    region: "Karapatien",
-    vegetarian: true,
-    allergens: "laktose",
-    alcohol: false,
-    image: "ringbroed-druer",
-    stars: 1
-    }
-]
-
 let productList = "http://kea-alt-del.dk/t5/api/productlist";
 let categoriesList = "http://kea-alt-del.dk/t5/api/categories"
 let specificItemList = "http://kea-alt-del.dk/t5/api/product?id=";
@@ -28,6 +8,7 @@ let promise = fetch(categoriesList)
 
 let gridSys = document.getElementById("gridSystem");
 let ulNavig = document.querySelector("ul");
+let modalsLand = document.getElementById("modalsLand");
 
 function showCateg(categ) {
     categ.forEach(createDivs);
@@ -50,7 +31,7 @@ function showCateg(categ) {
 
         li.appendChild(a);
         ulNavig.appendChild(li);
-        divEl.appendChild(h2);
+        gridSys.appendChild(h2);
         gridSys.appendChild(divEl);
 
 function showCategory(category) {
@@ -110,7 +91,16 @@ fetch(specificItemList + elementTable.id)
     modal.querySelector("h3").textContent = info.name;
     modal.querySelector("p").textContent = info.longdescription;
     modal.querySelector("img").setAttribute('src', ("imgs/large/" + info.image + ".jpg"));
-    modal.querySelector("#number").textContent = info.stars;
+
+
+    let c = "";
+    for (let j=0; j<info.stars; j++) {
+        c = c + "<i class=\"fas fa-star\"></i>";
+    };
+
+    modal.querySelector("#number").innerHTML = c;
+
+
     modal.querySelector("#region").textContent = info.region;
     modal.querySelector(".price").textContent = info.price + " dkk";
 
@@ -142,8 +132,9 @@ fetch(specificItemList + elementTable.id)
         modal.querySelector("#allergens").textContent = "Allergens: " + info.allergens;
     }
 
-    parentModal.setAttribute("class", info.id);
+    parentModal.setAttribute("class", "modal"+info.id);
     parentModal.classList.add("hide");
+    modalsLand.appendChild(parentModal);
 
 })
     };
@@ -152,9 +143,10 @@ fetch(specificItemList + elementTable.id)
     let button = clone.querySelector(".openButton");
     let modalTempl = clone.getElementById("#modalTemplate");
 
-    button.setAttribute("id", elementTable.id);
+    button.setAttribute("class", elementTable.id);
     button.classList.add("openButton");
 
+    button.addEventListener("click", clickFunction);
 
 
     clone.querySelector("h3").textContent = elementTable.name;
@@ -202,57 +194,18 @@ fetch(specificItemList + elementTable.id)
 
 }
 
-loadData(productList);
+function clickFunction(e) {
+    var elem = e.target.classList;
+    console.log(document.querySelector("main"));
+    console.log(elem[0]);
+    var modal = document.querySelector("article.modal"+elem[0]);
+    modal.classList.add("modal");
+    modal.classList.remove("hide");
 
-/*
-setTimeout(function() {
-    let button = document.querySelector(".openButton");
-    let modalTempl = document.getElementById("#modalTemplate");
-
-    button.forEach(function(elem) { elem.addEventListener("click", openModal);
-
-    function openModal() {
-        if (elem.class == modalTempl.class) {
-        console.log("success"); }
-        else {
-            console.log("fail");
-        }
+    modal.querySelector(".closeButton").addEventListener("click",insertHide);
+    function insertHide() {
+        modal.classList.add("hide");
     }
-
-},3000);
-
-let buttons = document.querySelectorAll(".openButton");
-let modals = document.querySelectorAll("#modalTemplate");
-
-buttons.forEach(function(elem)) {
-    elem.addEventListener("click", ()=>
-    if(elem.id == (modals.forEach(function(elem){
-    return elem.class;
-    }))) {
-    console.log("success");
-    } else {
-    console.log("fail");
-    }
-    )
-};
-
-
-*/
-
-var numberStars = document.querySelectorAll("#number");
-var arrayLength = numberStars.length;
-
-for (var i = 0; i < arrayLength; i++) {
-    console.log(numberStars[i]);
-    var a = numberStars[i].innerText;
-    var b = parseInt(a);
-    var c = "";
-
-    for(let j = 0; j < b; j++) {
-    c = c + "<i class=\"fas fa-star\"></i>";
-    }
-
-    numberStars[i].innerHTML = c;
-
 }
 
+loadData(productList);
